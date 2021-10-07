@@ -31,6 +31,8 @@ def info(file):
 
     products = main.find_all(class_="catalog-taxons-product")
 
+    models = [model.text.replace('\n', '') for model in main.find(attr_id="3297").find_all(class_="catalog-taxons-filter-multiselect__link-label list-filterable__label")][1:-3]
+
     for item in products:
         product = {}
         product["name"] = item.find(attrs={"class": "gtm-categories"})["data-name"]
@@ -48,14 +50,22 @@ def info(file):
 
         product["clock speed"] = listItems["Atmiņas taktiskā frekvence"].replace("MHz", '')
         product["VRAM"] = listItems["Video kartes atmiņa"].replace("GB", '')
+        product["manufacturer"] = product["name"].split(" ")[1]
+        
+        for model in models:
+            if model in product["name"]:
+                product["model"] = model
+
+        if not "model" in product:
+            continue
 
         data.append(product)
 
     return data
 
 def save_data(data):
-    with open(f"{DATA}GPU.csv", 'w', encoding='UTF-8', newline="") as f:
-        header = ['name', 'price', 'image', 'clock speed', 'VRAM']
+    with open(f"{DATA}GPU.csv", 'w', encoding="UTF-8", newline="") as f:
+        header = ["name", "price", "image", "clock speed", "VRAM", "manufacturer", "model"]
         w = csv.DictWriter(f, fieldnames= header)
         w.writeheader()
         for item in data:
@@ -70,6 +80,6 @@ def get_data(amount):
 
     save_data(all_data)
 
-download_pages(3)
+# download_pages(3)
 
 get_data(3)
