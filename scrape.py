@@ -13,7 +13,7 @@ def save(url, file):
         with open(f"{PAGES}{file}", 'w', encoding='UTF-8') as f:
             f.write(output.text)
     else:
-        print(f"ERROR: Statusa kods {output.status_code}")
+        print(f"ERROR: Status code {output.status_code}")
 
 def download_pages(count):
     for i in range(1, count + 1):
